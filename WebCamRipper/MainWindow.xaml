@@ -1,0 +1,54 @@
+﻿<Window x:Class="WebCamRipper.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WebCamRipper"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0"
+                       Grid.Column="0"
+                       Margin="3"
+                       FontSize="16"
+                       VerticalAlignment="Center"
+                       Text="Please enter URL to the Picture:" />
+
+        <TextBox Grid.Row="0"
+                 Grid.Column="1"
+                 Grid.ColumnSpan="2"
+                 Margin="3"
+                 x:Name="URLInput" />
+
+        <TextBox Grid.Row="1"
+                 Grid.Column="0"
+                 Grid.ColumnSpan="2"
+                 Margin="3"
+                 x:Name="MainOutputTextBox" />
+
+        <Button 
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="3"
+            x:Name="GoButton" Click="GoButton_Click">
+            <TextBlock TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       FontSize="16"
+                       Text="Get Pictures" />
+        </Button>
+
+       
+    </Grid>
+</Window>
