@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
@@ -24,6 +25,7 @@ namespace WebCamRipper
     public partial class MainWindow : Window
     {
         string Output = "";
+        private static string lastImageName;
 
         public MainWindow()
         {
@@ -35,9 +37,8 @@ namespace WebCamRipper
             //TODO Remove this hard link for testing. 
             URLInput.Text = @"http://images.drivebc.ca/bchighwaycam/pub/cameras/65.jpg";
 
-            var imageURL = URLInput.Text;
-            var imagePath = @"c:\temp\manningPark\";
-            var lastImageName = "";
+            var  imageURL = URLInput.Text;
+            var  imagePath = @"c:\temp\manningPark\";
 
             //TODO check if the dir is there if not make it
 
@@ -55,16 +56,24 @@ namespace WebCamRipper
                 //Loop over pause for 2 mins
                 while (true)
                 {
-                    Thread.Sleep(120000);
+                    Thread.Sleep(1000);
 
                     //Get the new picture but name it temp.
+                    savePic(imageURL, imagePath, true);
 
                     //Get the MD5 for both files.
 
+                    var MD5ofLastPic = CalculateMD5(lastImageName);
+                    var MD5ofTemp = CalculateMD5(@"c:\temp\manningPark\temp.jpg");
+
+
                     //If they match do nothing
-
-                    //Else save the file.
-
+                    if (!(MD5ofLastPic == MD5ofTemp))
+                    {
+                        savePic(imageURL, imagePath);
+                    }
+                  
+                   
 
 
 
@@ -76,13 +85,20 @@ namespace WebCamRipper
 
         }
 
-        public static void savePic(string url, string fileName)
+        public static void savePic(string url, string fileName, bool nameTemp = false)
         {
             using (WebClient client = new WebClient())
             {
                 var datetimeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                fileName = fileName + datetimeStamp + ".jpg";
 
-                client.DownloadFile(new Uri(url), fileName + datetimeStamp + ".jpg");
+                if(nameTemp == false)
+                    lastImageName = fileName;
+
+                if (nameTemp)
+                    fileName = @"c:\temp\manningPark\" + @"temp.jpg";
+
+                client.DownloadFile(new Uri(url), fileName);
 
                 //OR do we want to use this?
                 //client.DownloadFileAsync(new Uri(url), @"c:\temp\image35.png");
@@ -116,6 +132,7 @@ namespace WebCamRipper
             }
         }
 
+      
     }
 
 
