@@ -30,13 +30,13 @@ namespace WebCamRipper
         public MainWindow()
         {
             InitializeComponent();
+
+            //TODO Remove this hard link for testing. 
+            URLInput.Text = @"http://images.drivebc.ca/bchighwaycam/pub/cameras/65.jpg";
         }
 
         private void GoButton_Click(object sender, RoutedEventArgs e)
-        {
-            //TODO Remove this hard link for testing. 
-            URLInput.Text = @"http://images.drivebc.ca/bchighwaycam/pub/cameras/65.jpg";
-
+        { 
             var  imageURL = URLInput.Text;
             var  imagePath = @"c:\temp\manningPark\";
 
@@ -50,14 +50,16 @@ namespace WebCamRipper
             else
             {
                 //catch invalid URL error here?
-                AddToOutput("Downloading Image: " + imageURL);
+                AddToOutput("Downloading first Image: " + imageURL);
                 savePic(imageURL, imagePath);
 
                 //Loop over pause for 2 mins
                 while (true)
                 {
-                    Thread.Sleep(1000);
+                    AddToOutput("Sleeping for 30 seconds");
+                    Thread.Sleep(30000);
 
+                    AddToOutput("Saving temp file to disk to compare against last downloaded picture.");
                     //Get the new picture but name it temp.
                     savePic(imageURL, imagePath, true);
 
@@ -67,22 +69,18 @@ namespace WebCamRipper
                     var MD5ofTemp = CalculateMD5(@"c:\temp\manningPark\temp.jpg");
 
 
-                    //If they match do nothing
+                    //If they dont match its a new pic save it to disk.
                     if (!(MD5ofLastPic == MD5ofTemp))
                     {
+                        AddToOutput("New picture saving to disk.");
                         savePic(imageURL, imagePath);
                     }
-                  
-                   
-
-
-
+                    else
+                    {
+                        AddToOutput("SSame Picture not saving.");
+                    }
                 }
-
-
             }
-
-
         }
 
         public static void savePic(string url, string fileName, bool nameTemp = false)
@@ -92,6 +90,7 @@ namespace WebCamRipper
                 var datetimeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
                 fileName = fileName + datetimeStamp + ".jpg";
 
+                //only commit the last filename saved if your not saving a temp file.
                 if(nameTemp == false)
                     lastImageName = fileName;
 
@@ -103,14 +102,17 @@ namespace WebCamRipper
                 //OR do we want to use this?
                 //client.DownloadFileAsync(new Uri(url), @"c:\temp\image35.png");
             }
-
-
         }
 
-        private void AddToOutput(string input, Boolean DoubleNewLine = false)
+        private void AddToOutput(string input, Boolean DoubleNewLine = false, bool showDateTime = true)
         {
+            var datetimeStamp = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
 
-            Output += input;
+            if (showDateTime)
+                Output += datetimeStamp + " " + input;
+            else
+                Output += input;
+
 
             if (!DoubleNewLine)
                 Output += Environment.NewLine;
@@ -130,10 +132,6 @@ namespace WebCamRipper
                     return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
                 }
             }
-        }
-
-      
+        } 
     }
-
-
 }
